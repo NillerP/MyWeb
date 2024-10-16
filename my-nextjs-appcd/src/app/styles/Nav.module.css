@@ -1,0 +1,81 @@
+.container {
+  width: 100%;
+  background: transparent
+  
+}
+
+.nav {
+  display: flex;
+  color: black;
+  justify-content: center;
+  padding: 2rem;
+  background: rgba(34, 34, 34,0); /* Semi-transparent background */
+  -webkit-backdrop-filter: blur(5px);
+  backdrop-filter: blur(5px); /* Apply blur effect */
+  border-bottom: 1px solid white;
+  
+  
+}
+
+.navList {
+  display: flex;
+  width: 100%;
+  align-items: center;
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  
+}
+
+.navItem {
+  margin: 0 5px;
+  transition: transform 0.5s ease;
+}
+
+.navItem:hover{
+
+  transform: translateY(-10px);
+}
+
+.navItemRight {
+  margin-left: auto;
+}
+/*            #222222            */
+
+.navItem a {
+  color: white;
+  background: transparent; /* Keep this for other nav items */
+  padding: 1rem;
+width: 100%;
+height: 100%;
+  text-decoration: none;
+  
+  
+  
+ 
+}
+
+
+.navItem a:hover{
+  transform: translateY(-10px);
+}
+
+.navItemRight a:hover{
+  box-shadow: 1px 5px 20px white;
+
+}
+
+.navItemRight a {
+  color: white;
+  background-color: transparent; /* Make the button background transparent */
+  padding: 1rem;
+  border-radius: 15px;
+  text-decoration: none;
+  border: 2px solid white; /* Optional: To make the button more visible */
+}
+
+.navItemRight a:hover {
+  color: white;
+  border-color: white;
+  
+}

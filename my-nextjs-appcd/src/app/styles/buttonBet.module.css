@@ -1,0 +1,42 @@
+.green {
+    color: white;
+    font-size: medium;
+    padding: 4px;
+    border-radius: 0.5rem;
+    box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+    margin-right: 0.5rem;
+    background-color: green;
+    width: 4rem;
+    
+}
+.red{
+    color: white;
+    font-size: medium;
+    padding: 4px;
+    border-radius: 0.5rem;
+    box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+    margin-right: 0.5rem;
+    background-color: red;
+    width: 4rem;
+}
+
+.sort1{
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    justify-content: center;
+    align-items: center;
+    margin-right: 10rem;
+    margin-left: 10rem;
+    padding-top: 1rem;
+}
+.sort2{
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    justify-content: center;
+    align-items: center;
+    margin-right: 10rem;
+    margin-left: 10rem;
+    padding-top: 1rem;
+}
