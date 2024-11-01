@@ -27,6 +27,7 @@ export async function GET(req) {
     const decoded = jwt.verify(token, process.env.JWT_SECRET);
     // Example user data based on decoded token
     const user = {
+      userId: decoded.userId,
       username: decoded.username,
       _id: decoded._id,
       isAdmin: decoded.isAdmin,

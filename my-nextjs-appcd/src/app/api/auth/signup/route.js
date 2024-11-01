@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import clientPromise from "@/app/lib/mongodb";
 import bcrypt from "bcrypt";
 import validator from "validator";
+import { v4 as uuidv4 } from "uuid";
 
 export async function POST(req) {
   try {
@@ -60,10 +61,11 @@ export async function POST(req) {
         { status: 400 }
       );
     }
-
+    const userId = uuidv4();
     // Hash password and create new user
     const hashedPassword = await bcrypt.hash(sanitizedPassword, 10);
     await collection.insertOne({
+      userId: userId,
       username: normalizedUsername,
       email: normalizedEmail,
       password: hashedPassword,
@@ -74,6 +76,7 @@ export async function POST(req) {
     return NextResponse.json({
       success: true,
       message: "User created successfully",
+      userId: userId,
     });
   } catch (error) {
     console.error("Error during signup:", error.message, error.stack); // Log detailed error info

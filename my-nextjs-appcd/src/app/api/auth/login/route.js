@@ -71,6 +71,7 @@ export async function POST(req) {
     // Create a JWT token
     const token = jwt.sign(
       {
+        userId: user.userId,
         username: user.username,
         _id: user._id,
         isAdmin: user.isAdmin,
@@ -87,6 +88,7 @@ export async function POST(req) {
       message: "Login successful",
       token,
       user: {
+        userId: user.userId,
         username: user.username,
         _id: user._id,
         isAdmin: user.isAdmin,

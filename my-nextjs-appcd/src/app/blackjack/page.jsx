@@ -10,17 +10,65 @@ import { useAuth } from "../context/AuthContext";
 
 export function Blackjack() {
   // Game States
+  const { user } = useAuth();
   const [gameDeck, setGameDeck] = useState(combinations);
   const [playerHand, setPlayerHand] = useState([]);
   const [dealerHand, setDealerHand] = useState([]);
   const [gameOver, setGameOver] = useState(false);
   const [result, setResult] = useState({ type: "", message: "" });
   const [dealerCardHidden, setDealerCardHidden] = useState(true);
-  const [coins, setCoins] = useState(1000); // Starting coins
+  const [coins, setCoins] = useState(0); // Starting coins
   const [bet, setBet] = useState(0); // Current bet amount
   const [betPlaced, setBetPlaced] = useState(false); // Track if bet has been placed
   const [isDealerDrawing, setIsDealerDrawing] = useState(false); // Track if dealer is drawing
   const [standPressed, setStandPressed] = useState(false);
+  const [status, setStatus] = useState("");
+  const userId1 = user.userId;
+
+  // Fetch user's coins when the component mounts
+  useEffect(() => {
+    // Check if user is available and then fetch coins
+    if (user && user._id) {
+      // Ensure user and user._id are defined
+      const fetchCoins = async () => {
+        try {
+          const response = await fetch(`/api/coins/${user._id}`); // Use user._id to fetch coins
+
+          if (!response.ok) {
+            throw new Error("User not found or no coins found");
+          }
+
+          const data = await response.json();
+          setCoins(data.coins); // Assuming the response includes a 'coins' field
+        } catch (err) {
+          setError(err.message);
+        }
+      };
+
+      fetchCoins();
+    }
+  }, [user]);
+
+  const updateCoins = async (coins) => {
+    try {
+      const response = await fetch("/api/coins", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ userId1, coins }),
+      });
+
+      // Attempt to parse JSON if response is ok and contains valid JSON
+      const data = response.ok ? await response.json() : null;
+
+      if (data && data.success) {
+        setStatus(`Success: ${JSON.stringify(data)}`);
+      } else {
+        setStatus(`Error: ${data ? data.error : "Unknown error"}`);
+      }
+    } catch (error) {
+      setStatus(`Request failed: ${error.message}`);
+    }
+  };
 
   // Get random card from deck
   const getRandomCardFromDeck = () => {
@@ -52,7 +100,7 @@ export function Blackjack() {
     // Delay showing the dealer's hidden card
     setTimeout(() => {
       dealerTurn();
-    }, 1000); // 1 second delay
+    }, 1000); // 1 second delWay
   };
 
   // Dealer's turn with delay
@@ -132,18 +180,26 @@ export function Blackjack() {
   const handleGameOver = (result) => {
     setGameOver(true);
     setResult(result);
+
+    let newCoinBalance = coins; // Local variable to track updated coin balance
+
     switch (result.type) {
       case "Player":
-        setCoins(coins + bet * 2); // Player wins, add bet amount
+        newCoinBalance += bet * 2;
+        updateCoins(newCoinBalance); // Player wins, add double the bet to coins
         break;
       case "Dealer":
+        // No change in coin balance, player lost the bet
         break;
       case "Draw":
-        setCoins(coins + bet); // Dealer wins, subtract bet amount
+        newCoinBalance += bet;
+        updateCoins(newCoinBalance); // It's a draw, return the bet to the player
         break;
       default:
         break;
     }
+
+    setCoins(newCoinBalance); // Update the coin balance in the local state
   };
 
   // Reset the game
@@ -163,6 +219,7 @@ export function Blackjack() {
     if (bet > 0 && bet <= coins) {
       setCoins(coins - bet); // Deduct bet from coins
       setBetPlaced(true);
+      updateCoins(coins - bet);
       setPlayerHand([getRandomCardFromDeck(), getRandomCardFromDeck()]);
       setDealerHand([getRandomCardFromDeck(), getRandomCardFromDeck()]);
     } else {
@@ -175,14 +232,14 @@ export function Blackjack() {
     if (betPlaced && playerHand.length === 2 && dealerHand.length === 2) {
       const playerValue = calculateHandValue(playerHand);
       const dealerValue = calculateHandValue(dealerHand);
-
+      let calcValue = coins + bet * 2.25;
       if (playerValue === 21) {
         handleGameOver(
           {
             type: "Player",
-            message: `BLACKJACK! Player wins! You won ${bet * 2.25}`,
+            message: `BLACKJACK! Player wins! You won ${bet * 2}`,
           },
-          setCoins(coins + bet * 2.25)
+          setCoins(calcValue)
         );
       } else if (dealerValue === 21) {
         handleGameOver(
@@ -202,7 +259,6 @@ export function Blackjack() {
 
       {/* Display Coin Balance and Bet */}
       <div className="text-center mb-4">
-        <link rel="" href="buttonBet.module.css"></link>
         <p className="text-2xl">Coins: {coins}</p>
         {!gameOver && !betPlaced && (
           <div>
@@ -222,71 +278,49 @@ export function Blackjack() {
             <Button bg_color={`green`} onClick={handlePlaceBet}>
               Place Bet
             </Button>
+
+            {/* Bet Increment Buttons */}
             <div className={styles.sort1}>
-              <button
-                onClick={() =>
-                  setBet((prevBet) => Math.min(prevBet + 50, coins))
-                }
-                className={styles.green}
-              >
-                + 50
-              </button>
-              <button
-                onClick={() =>
-                  setBet((prevBet) => Math.min(prevBet + 100, coins))
-                }
-                className={styles.green}
-              >
-                + 100
-              </button>
-              <button
-                onClick={() =>
-                  setBet((prevBet) => Math.min(prevBet + 500, coins))
-                }
-                className={styles.green}
-              >
-                + 500
-              </button>
-              <button
-                onClick={() =>
-                  setBet((prevBet) => Math.min(prevBet + 1000, coins))
-                }
-                className={styles.green}
-              >
-                + 1000
-              </button>
-              <button onClick={() => setBet(coins)} className={styles.green}>
-                + MAX
-              </button>
+              {[
+                { amount: 50, label: "+ 50" },
+                { amount: 100, label: "+ 100" },
+                { amount: 500, label: "+ 500" },
+                { amount: 1000, label: "+ 1000" },
+                { amount: coins, label: "+ MAX" },
+              ].map(({ amount, label }) => (
+                <button
+                  key={amount}
+                  onClick={() =>
+                    setBet((prevBet) => Math.min(prevBet + amount, coins))
+                  }
+                  className={styles.green}
+                  aria-label={`Increase bet by ${amount}`}
+                >
+                  {label}
+                </button>
+              ))}
             </div>
+
+            {/* Bet Decrement Buttons */}
             <div className={styles.sort2}>
-              <button
-                onClick={() => setBet((prevBet) => Math.max(prevBet - 50, 0))}
-                className={styles.red}
-              >
-                - 50
-              </button>
-              <button
-                onClick={() => setBet((prevBet) => Math.max(prevBet - 100, 0))}
-                className={styles.red}
-              >
-                - 100
-              </button>
-              <button
-                onClick={() => setBet((prevBet) => Math.max(prevBet - 500, 0))}
-                className={styles.red}
-              >
-                - 500
-              </button>
-              <button
-                onClick={() => setBet((prevBet) => Math.max(prevBet - 1000, 0))}
-                className={styles.red}
-              >
-                - 1000
-              </button>
-              <button onClick={() => setBet(0)} className={styles.red}>
-                - MAX
-              </button>
+              {[
+                { amount: 50, label: "- 50" },
+                { amount: 100, label: "- 100" },
+                { amount: 500, label: "- 500" },
+                { amount: 1000, label: "- 1000" },
+                { amount: 0, label: "- MAX" },
+              ].map(({ amount, label }) => (
+                <button
+                  key={amount}
+                  onClick={() =>
+                    setBet((prevBet) => Math.max(prevBet - amount, 0))
+                  }
+                  className={styles.red}
+                  aria-label={`Decrease bet by ${amount}`}
+                >
+                  {label}
+                </button>
+              ))}
             </div>
           </div>
         )}
@@ -294,13 +328,13 @@ export function Blackjack() {
 
       {gameOver && (
         <div
-          className={`text-white ${
+          className={`text-white font-bold rounded-md text-center mt-4 py-4 ${
             result.type === "Player"
               ? "bg-green-600"
               : result.type === "Dealer"
               ? "bg-red-700"
               : "bg-yellow-500" // Background color for Draw scenario
-          } font-bold rounded-md text-center mt-4 py-4`}
+          }`}
         >
           <h2 className="text-2xl">{result.message}</h2>
         </div>
@@ -316,7 +350,7 @@ export function Blackjack() {
             Stand
           </Button>
           <span className="bg-black rounded-md flex justify-center items-center text-yellow-500 border-2 border-yellow-500">
-            Bet Placed : {bet}
+            Bet Placed: {bet}
           </span>
         </div>
       )}
@@ -326,13 +360,13 @@ export function Blackjack() {
         <div className="flex justify-center mt-4">
           <button
             onClick={resetGame}
-            className={`text-white ${
+            className={`text-white font-medium px-4 py-2 rounded-lg shadow-md mr-2 ${
               result.type === "Player"
                 ? "bg-green-600"
                 : result.type === "Dealer"
                 ? "bg-red-700"
                 : "bg-yellow-500" // Background color for Draw scenario
-            } text-white font-medium px-4 py-2 rounded-lg shadow-md mr-2`}
+            }`}
           >
             Reset
           </button>
