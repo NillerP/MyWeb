@@ -1,7 +1,7 @@
 "use client"; // Ensure this file is a Client Component
 
 import Link from "next/link";
-import React from "react";
+import React, { useEffect } from "react";
 import styles from "@/app/styles/Nav.module.css";
 import { useAuth } from "../context/AuthContext"; // Adjust the path as needed
 import { useRouter } from "next/navigation";
@@ -44,8 +44,15 @@ const Nav = () => {
               BLACKJACK <span className="text-red-500 text-auto">+</span>
             </Link>
           </li>
+
+          {}
           {isAuthenticated ? (
             <>
+              {user.isAdmin && (
+                <li>
+                  <Link href="/admin">Dashboard</Link>
+                </li>
+              )}
               <li className="ml-auto">
                 <span className="text-white border-2 rounded-md p-2">
                   {user?.username}{" "}
