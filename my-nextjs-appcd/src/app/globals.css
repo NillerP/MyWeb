@@ -8,13 +8,21 @@
   }
 }
 
-body{
-  background: rgb(241,4,44);
-background: linear-gradient(90deg, rgba(241,4,44,1) 1%, rgba(2,0,36,1) 100%);
+body {
+  margin: 0;
+  height: 100vh;
+  background-image: url('/image.png'); /* Replace with the actual path to your image */
+  background-size: cover; /* Ensures the image covers the entire viewport */
+  background-position: center; /* Centers the background image */
+  background-repeat: no-repeat; /* Prevents the image from repeating */
+  background-attachment: fixed; /* Keeps the image fixed even if there's scrollable content */
+  color: white; /* Optional: White text color for contrast */
+  z-index: -3;
 }
 
 :root {
   --main-color:linear-gradient(90deg, rgba(241,4,44,1) 27%, rgba(2,0,36,1) 100%);
+  
 }
 
 body::-webkit-scrollbar {
