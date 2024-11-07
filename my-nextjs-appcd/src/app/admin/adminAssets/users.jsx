@@ -91,7 +91,7 @@ export default function Users() {
             <div className="mb-2">
               <label className="font-semibold">User ID:</label>
               <input
-                className="ml-2 p-1 border border-gray-300 rounded"
+                className="ml-2 p-1 border border-gray-300 rounded w-96"
                 type="text"
                 name="userId"
                 value={editData[user._id]?.userId || user.userId}
