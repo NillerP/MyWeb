@@ -16,8 +16,7 @@ body {
   background-position: center; /* Centers the background image */
   background-repeat: no-repeat; /* Prevents the image from repeating */
   background-attachment: fixed; /* Keeps the image fixed even if there's scrollable content */
-  color: white; /* Optional: White text color for contrast */
-  z-index: -3;
+  z-index: -1;
 }
 
 :root {
