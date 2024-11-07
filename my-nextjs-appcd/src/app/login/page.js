@@ -101,7 +101,7 @@ function Login() {
         </div>
         <div className={styles.signup}>
           <a href="/signup">
-            <p>Don't have an account? Sign Up</p>
+            <p>don{`'`}t have an account? Sign Up</p>
           </a>
         </div>
         {success && <p className={styles.success}>{success}</p>}

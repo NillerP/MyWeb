@@ -32,7 +32,7 @@ export function Blackjack() {
       // Ensure user and user._id are defined
       const fetchCoins = async () => {
         try {
-          const response = await fetch(`/api/coins/${user._id}`); // Use user._id to fetch coins
+          const response = await fetch(`/api/coins/${user._id}`);
 
           if (!response.ok) {
             throw new Error("User not found or no coins found");
