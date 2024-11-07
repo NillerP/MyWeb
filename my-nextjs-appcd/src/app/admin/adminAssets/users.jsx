@@ -96,7 +96,7 @@ export default function Users() {
                 name="userId"
                 value={editData[user._id]?.userId || user.userId}
                 onChange={(e) => handleEditChange(e, user._id)}
-                readOnly // Assuming userId should not be editable
+                readOnly
               />
             </div>
             <div className="mb-2">
