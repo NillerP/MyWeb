@@ -10,7 +10,7 @@ export async function GET(req) {
     const users = await collection.find({}).toArray();
     return new Response(JSON.stringify({ success: true, data: users }), {
       status: 200,
-      headers: { "Content-Type": "application/josn" },
+      headers: { "Content-Type": "application/json" },
     });
   } catch (error) {
     return new Response(
