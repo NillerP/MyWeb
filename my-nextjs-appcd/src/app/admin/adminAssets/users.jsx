@@ -41,7 +41,7 @@ export default function Users() {
       };
 
       const response = await fetch("/api/users", {
-        method: "PUT",
+        method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ id: userId, updatedData }),
       });
